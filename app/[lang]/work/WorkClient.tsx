@@ -12,9 +12,10 @@ thumbnail_large:string
 title:string
 }
 
-export default function Work(){
+export default function WorkClient(){
 
-const { lang } = useParams<{ lang:string }>()
+const { lang } = useParams<{ lang: string }>()
+
 const isArabic = lang === "ar"
 
 const title = isArabic

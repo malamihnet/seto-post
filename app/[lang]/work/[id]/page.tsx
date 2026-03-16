@@ -1,45 +1,64 @@
 import ProjectClient from "./ProjectClient"
 
-export async function generateMetadata({ params }: {
-  params: { id: string }
-}) {
-
-  const { id } = params
-
-  const res = await fetch(`https://vimeo.com/api/v2/video/${id}.json`)
-  const data = await res.json()
-
-  const video = data?.[0]
-
-  if (!video) {
-    return {
-      title: "Project | Seto's Post Production",
-      description: "Seto's Post Production video portfolio"
-    }
-  }
-
-  return {
-    title: `${video.title} | Seto's Post Production`,
-    description:
-      video.description?.slice(0, 160) ||
-      "Seto's Post Production video editing portfolio",
-    openGraph: {
-      title: video.title,
-      images: [video.thumbnail_large]
-    }
-  }
+type Params = {
+  lang: string
+  id: string
 }
 
-type PageProps = {
-  params: {
-    id: string
-    lang: string
-  }
+export async function generateMetadata({
+params
+}:{
+params: Promise<Params>
+}){
+
+const { id } = await params
+
+try{
+
+const res = await fetch(`https://vimeo.com/api/v2/video/${id}.json`)
+
+const data = await res.json()
+
+const title = data?.[0]?.title || "Video"
+
+return{
+title: `${title} | Seto's Post Production`,
+description: data?.[0]?.description || "Cinematic video production by Seto's Post Production."
 }
 
-export default function Page({ params }: PageProps) {
+}catch{
 
-  const { id, lang } = params
+return{
+title:"Video | Seto's Post Production"
+}
 
-  return <ProjectClient id={id} lang={lang} />
+}
+
+}
+
+export default async function Page({
+params
+}:{
+params: Promise<Params>
+}){
+
+const { id, lang } = await params
+
+const cleanId = String(id || "").replace(/\D/g,"")
+
+if(!cleanId){
+return(
+<div className="min-h-screen bg-black text-white flex items-center justify-center">
+Invalid Project
+</div>
+)
+}
+
+return(
+<ProjectClient
+id={cleanId}
+lang={lang}
+/>
+)
+
 }

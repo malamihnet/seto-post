@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
 import {
 FaFilm,
@@ -17,7 +18,9 @@ FaPenNib,
 FaRocket
 } from "react-icons/fa"
 
-export default function AboutClient({ lang }: { lang: string }) {
+export default function AboutClient(){
+
+const { lang } = useParams<{ lang: string }>()
 
 const isArabic = lang === "ar"
 
